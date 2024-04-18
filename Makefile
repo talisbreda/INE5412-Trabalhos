@@ -14,7 +14,7 @@ SRCS = main.cpp
 TARGET = main
 
 # The build target executable:
-all: $(TARGET)
+all: clean $(TARGET) 
 
 $(TARGET): $(SRCS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(SRCS)
