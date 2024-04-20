@@ -15,6 +15,10 @@ public:
 		this->priority = priority;
 		this->remaining_time = duration;
 		this->pid = -1;
+		this->registers = new uint64_t[6];
+		this->SP = 0;
+		this->PC = 0;
+		this->ST = 0;
 	}
 
 	int get_creation_time() {
@@ -44,6 +48,38 @@ public:
 	int get_pid() {
 		return pid;
 	}
+
+	uint64_t *get_registers() {
+		return registers;
+	}
+
+	uint64_t get_SP() {
+		return SP;
+	}
+
+	uint64_t get_PC() {
+		return PC;
+	}
+
+	uint64_t get_ST() {
+		return ST;
+	}
+
+	void set_registers(uint64_t *registers) {
+		this->registers = registers;
+	}
+
+	void set_SP(uint64_t SP) {
+		this->SP = SP;
+	}
+
+	void set_PC(uint64_t PC) {
+		this->PC = PC;
+	}
+
+	void set_ST(uint64_t ST) {
+		this->ST = ST;
+	}
 	
 	void dec_remaining_time() {
 		remaining_time--;
@@ -70,6 +106,10 @@ private:
 	int priority;
 	int remaining_time;
 	int pid;
+	uint64_t *registers;
+	uint64_t SP;
+	uint64_t PC;
+	uint64_t ST;
 };
 
 #endif

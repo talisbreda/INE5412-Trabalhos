@@ -35,18 +35,19 @@ public:
                 break;
             }
             ProcessControlBlock *pcb = ready_processes[0];
-            Process *p = new Process(pcb);
+            Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
             // if (!deadline) printf("Process %d with priority %d started \n", current_time, p->get_pid(), p->get_priority());
             while (pcb->get_remaining_time() > 0 && !deadline) {
-                this->cpu->run_process(p);
-                pcb->dec_remaining_time();
+                this->cpu->run_process();
                 // printf("Process %d with priority %d has %d seconds left\n", current_time, p->get_pid(), p->get_priority(), p->get_remaining_time());
                 this->print_current_status(p); 
                 current_time++;
                 deadline = deadline_at_current_time();
             }
-            delete p;
+            // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
+            this->cpu->stop_process();
+            // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
     }
 private:
