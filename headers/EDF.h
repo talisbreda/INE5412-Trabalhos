@@ -69,9 +69,9 @@ private:
         }
     }
 
-    std::vector<ProcessControlBlock *> sort_by_priority(std::vector<ProcessControlBlock *> process_table) {
+    std::vector<ProcessControlBlock *> sort_by_deadline(std::vector<ProcessControlBlock *> process_table) {
         std::sort(process_table.begin(), process_table.end(), [](ProcessControlBlock *a, ProcessControlBlock *b) {
-            return a->get_priority() > b->get_priority();
+            return b->get_deadline() > a->get_deadline();
         });
         return process_table;
     }
@@ -86,7 +86,7 @@ private:
                 }
             }
         }
-        return sort_by_priority(ready_processes);
+        return sort_by_deadline(ready_processes);
     }
 
     void organize_processes_by_start_time() {
