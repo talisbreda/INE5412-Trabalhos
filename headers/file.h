@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <process_params.h>
+#include <process_control_block.h>
 
 class File
 {
@@ -26,7 +26,7 @@ public:
 		}
 		
 		while (myfile >> start_time >> duration >> period >> deadline >> priority) {
-			ProcessParams *p = new ProcessParams(start_time, duration, period, deadline, priority);
+			ProcessControlBlock *p = new ProcessControlBlock(start_time, duration, period, deadline, priority, -1);
 			processes.push_back(p);
 		}
 
@@ -34,28 +34,28 @@ public:
 	}
 
 	void print_processes_params() {
-		std::vector<ProcessParams *>::iterator iter = processes.begin();
+		std::vector<ProcessControlBlock *>::iterator iter = processes.begin();
 
-		for(iter; iter < processes.end(); iter++) {
-			ProcessParams *p = *iter;
+		for(; iter < processes.end(); iter++) {
+			ProcessControlBlock *p = *iter;
 			std::cout << *p;
 		}
 	}
 
-	std::vector<ProcessParams *> get_processes() {
+	std::vector<ProcessControlBlock *> get_processes() {
 		return processes;
 	}
 
 	~File() {
 		for(auto i = 0u; i < processes.size() ; i++) {
-			ProcessParams *p = processes[i];
+			ProcessControlBlock *p = processes[i];
 			delete p;
 		}
 	}
 
 private:
 	std::ifstream myfile; 
-	std::vector<ProcessParams *> processes;
+	std::vector<ProcessControlBlock *> processes;
 };
 
 #endif
