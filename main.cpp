@@ -5,10 +5,18 @@
 
 #include <cpu.h>
 #include <RM.h>
+#include <EDF.h>
 
-int main()
+int main(int argc, char **argv)
 {
 	CPU* cpu = new CPU();
-	RM* rm = new RM(cpu);
-	rm->execute();
+	if (strcmp(argv[1], "edf")) {
+		printf("Initializing EDF scheduler\n");
+		EDF* edf = new EDF(cpu);
+		edf->execute();
+	}	else if (strcmp(argv[1], "rm")) {
+		printf("Initializing RM scheduler\n");
+		RM* rm = new RM(cpu);
+		rm->execute();
+	}
 }
