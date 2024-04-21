@@ -20,6 +20,7 @@ public:
 		this->SP = 0;
 		this->PC = 0;
 		this->ST = 0;
+		this->total_turnaround_time = 0;
 	}
 
 	int get_creation_time() {
@@ -52,6 +53,10 @@ public:
 
 	int get_pid() {
 		return pid;
+	}
+
+	int get_total_turnaround_time() {
+		return total_turnaround_time;
 	}
 
 	uint64_t *get_registers() {
@@ -98,6 +103,10 @@ public:
 		this->pid = pid;
 	}
 
+	void set_total_turnaround_time(int total_turnaround_time) {
+		this->total_turnaround_time = total_turnaround_time;
+	}
+
 	void reset() {
 			remaining_time = duration;
 	}
@@ -116,6 +125,7 @@ private:
 	int iterations;
 	int remaining_time;
 	int pid;
+	int total_turnaround_time;
 	uint64_t *registers;
 	uint64_t SP;
 	uint64_t PC;

@@ -6,6 +6,9 @@
 #include <process.h>
 #include <process_control_block.h>
 #include <bits/stdc++.h>
+#include <chrono>
+
+using namespace std::chrono;
 
 class EDF
 {
@@ -44,9 +47,17 @@ public:
             else if (ready_processes.size() == 0)
             {
                 printf("\nNo processes to run\n");
+                int avg_turnaround_time = 0;
+                for (auto pcb : process_table) {
+                    // code to loop through each PCB
+                    printf("PCB %d: Total turnaround time: %dus\n", pcb->get_pid(), pcb->get_total_turnaround_time());
+                    avg_turnaround_time += pcb->get_total_turnaround_time();
+                }
+                printf("Average turnaround time: %ldus\n", avg_turnaround_time / process_table.size());
                 break;
             }
             ProcessControlBlock *pcb = ready_processes[0];
+            auto start = high_resolution_clock::now();
             Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
             // if (!deadline) printf("Process %d with priority %d started \n", current_time, p->get_pid(), p->get_priority());
@@ -59,6 +70,10 @@ public:
             }
             // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
             this->cpu->stop_process();
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<microseconds>(stop - start);
+
+            pcb->set_total_turnaround_time(pcb->get_total_turnaround_time() + duration.count());
             // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
     }
@@ -72,7 +87,7 @@ private:
             if (current != nullptr && current->get_pid() == (int) i) {
                 printf("## ");
             } else {
-                if (process_table[i]->get_creation_time() <= current_time || process_table[i]->get_remaining_time() == 0) {
+                if (process_table[i]->get_iterations() > 0 && (process_table[i]->get_creation_time() <= current_time || process_table[i]->get_remaining_time() == 0)) {
                     printf("-- ");
                 } else {
                     printf("   ");
@@ -85,9 +100,6 @@ private:
         std::sort(process_table.begin(), process_table.end(), [](ProcessControlBlock *a, ProcessControlBlock *b) {
             return b->get_deadline() > a->get_deadline();
         });
-        for (auto i = 0u; i < process_table.size(); i++) {
-            printf(" - P%d: %d", process_table[i]->get_pid(), process_table[i]->get_deadline());
-        }
         return process_table;
     }
 

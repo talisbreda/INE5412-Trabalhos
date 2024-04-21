@@ -23,7 +23,7 @@ public:
     }
 
     void delay() {
-        sleep(1);
+        sleep(0.5);
     }
 
     Process *set_process(ProcessControlBlock *pcb) {
