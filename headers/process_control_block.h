@@ -22,6 +22,7 @@ public:
 		this->ST = 0;
 		this->total_turnaround_time = 0;
 		this->total_wait_periods = 0;
+		this->lost_deadlines = 0;
 	}
 
 	int get_creation_time() {
@@ -80,6 +81,10 @@ public:
 		return ST;
 	}
 
+	int get_lost_deadlines() {
+		return lost_deadlines;
+	}
+
 	void set_registers(uint64_t *registers) {
 		this->registers = registers;
 	}
@@ -116,6 +121,10 @@ public:
 		this->total_wait_periods = total_wait_periods;
 	}
 
+	void set_lost_deadlines(int lost_deadlines) {
+		this->lost_deadlines = lost_deadlines;
+	}
+
 	void reset() {
 			remaining_time = duration;
 	}
@@ -140,6 +149,7 @@ private:
 	uint64_t SP;
 	uint64_t PC;
 	uint64_t ST;
+	int lost_deadlines;
 };
 
 #endif

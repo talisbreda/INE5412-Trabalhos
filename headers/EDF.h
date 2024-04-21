@@ -39,6 +39,8 @@ public:
                 bool process_created = process_created_at_current_time();
                 if (!deadline && !process_created) {
                     this->cpu->delay();
+                    if (this->cpu->get_process() != nullptr)
+                        this->cpu->stop_process();
                     this->print_current_status(); 
                     current_time++;
                     deadline = deadline_at_current_time();
@@ -55,29 +57,35 @@ public:
                     printf("P%d: Total turnaround time: %dus\n", pcb->get_pid(), pcb->get_total_turnaround_time());
                     avg_turnaround_time += pcb->get_total_turnaround_time();
                     printf("P%d: Total wait periods: %d\n", pcb->get_pid(), pcb->get_total_wait_periods());
+                    printf("P%d: Lost deadlines: %d\n", pcb->get_pid(), pcb->get_lost_deadlines());
                 }
                 printf("Average turnaround time: %ldus\n", avg_turnaround_time / process_table.size());
+                printf("Number of context switches: %d\n", context_switches);
                 break;
             }
             ProcessControlBlock *pcb = ready_processes[0];
-            auto start = high_resolution_clock::now();
-            Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
+
+            if (pcb->get_remaining_time() > 0 && !deadline) {
+                Process *currentProcess = this->cpu->get_process();
+                if (currentProcess != nullptr && pcb->get_pid() != currentProcess->get_pid()) {
+                    this->cpu->stop_process();
+                    this->cpu->set_process(pcb);
+                    context_switches++;
+                } else if (currentProcess == nullptr) {
+                    context_switches++;
+                    this->cpu->set_process(pcb);
+                }
+            }
+
             bool process_created = process_created_at_current_time();
             while (pcb->get_remaining_time() > 0 && !deadline && !process_created) {
                 this->cpu->run_process();
-                this->print_current_status(p); 
+                this->print_current_status(this->cpu->get_process()); 
                 current_time++;
                 deadline = deadline_at_current_time();
                 process_created = process_created_at_current_time();
             }
-            // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
-            this->cpu->stop_process();
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-
-            pcb->set_total_turnaround_time(pcb->get_total_turnaround_time() + duration.count());
-            // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
     }
 private:
@@ -183,6 +191,7 @@ private:
                     }
                 } else if (deadline.first->get_iterations() > 0) {
                     printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
+                    deadline.first->set_lost_deadlines(deadline.first->get_lost_deadlines() + 1);
                     deadlines_missed++;
                 }
                 deadline.first->reset();
@@ -210,6 +219,7 @@ private:
     bool deadline_accounted = false;
     bool creation_accounted = false;
     int deadlines_missed = 0;
+    int context_switches = 0;
 };
 
 #endif
