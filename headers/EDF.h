@@ -98,11 +98,37 @@ private:
         }
     }
 
-    std::vector<ProcessControlBlock *> sort_by_deadline(std::vector<ProcessControlBlock *> process_table) {
-        std::sort(process_table.begin(), process_table.end(), [](ProcessControlBlock *a, ProcessControlBlock *b) {
-            return b->get_deadline() > a->get_deadline();
-        });
-        return process_table;
+    std::vector<ProcessControlBlock* > sort_by_earliest_deadline(std::vector<ProcessControlBlock *> processes) {
+        bool swapped;
+        auto n = processes.size();
+        if (n <= 1) return processes;
+        for (auto i = 0u; i < n - 1; i++) {
+            swapped = false;
+            for (auto j = 0u; j < n - i - 1; j++) {
+                int j_next_deadline = processes[j]->get_creation_time() + processes[j]->get_deadline();
+                while (j_next_deadline <= current_time) {
+                    j_next_deadline += processes[j]->get_deadline();
+                }
+                int jp1_next_deadline = processes[j + 1]->get_creation_time() + processes[j + 1]->get_deadline();
+                while (jp1_next_deadline <= current_time) {
+                    jp1_next_deadline += processes[j + 1]->get_deadline();
+                }
+
+                if (j_next_deadline == jp1_next_deadline) {
+                    if (processes[j]->get_priority() < processes[j + 1]->get_priority()) {
+                        std::swap(processes[j], processes[j + 1]);
+                        swapped = true;
+                    }
+                } else if (j_next_deadline > jp1_next_deadline) {
+                    std::swap(processes[j], processes[j + 1]);
+                    swapped = true;
+                }
+            }
+
+            if (swapped == false)
+                break;
+        }
+        return processes;
     }
 
     std::vector<ProcessControlBlock *> get_ready_processes() {
@@ -115,7 +141,7 @@ private:
                 }
             }
         }
-        return sort_by_deadline(ready_processes);
+        return sort_by_deadline(ready_processes); 
     }
 
     void organize_processes_by_start_time() {
