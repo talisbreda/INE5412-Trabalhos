@@ -50,8 +50,9 @@ public:
                 int avg_turnaround_time = 0;
                 for (auto pcb : process_table) {
                     // code to loop through each PCB
-                    printf("PCB %d: Total turnaround time: %dus\n", pcb->get_pid(), pcb->get_total_turnaround_time());
+                    printf("P%d: Total turnaround time: %dus\n", pcb->get_pid(), pcb->get_total_turnaround_time());
                     avg_turnaround_time += pcb->get_total_turnaround_time();
+                    printf("P%d: Total wait periods: %d\n", pcb->get_pid(), pcb->get_total_wait_periods());
                 }
                 printf("Average turnaround time: %ldus\n", avg_turnaround_time / process_table.size());
                 break;
@@ -89,6 +90,7 @@ private:
             } else {
                 if (process_table[i]->get_iterations() > 0 && (process_table[i]->get_creation_time() <= current_time || process_table[i]->get_remaining_time() == 0)) {
                     printf("-- ");
+                    process_table[i]->set_total_wait_periods(process_table[i]->get_total_wait_periods() + 1);
                 } else {
                     printf("   ");
                 }

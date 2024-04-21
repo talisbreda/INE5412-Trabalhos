@@ -21,6 +21,7 @@ public:
 		this->PC = 0;
 		this->ST = 0;
 		this->total_turnaround_time = 0;
+		this->total_wait_periods = 0;
 	}
 
 	int get_creation_time() {
@@ -57,6 +58,10 @@ public:
 
 	int get_total_turnaround_time() {
 		return total_turnaround_time;
+	}
+
+	int get_total_wait_periods() {
+		return total_wait_periods;
 	}
 
 	uint64_t *get_registers() {
@@ -107,6 +112,10 @@ public:
 		this->total_turnaround_time = total_turnaround_time;
 	}
 
+	void set_total_wait_periods(int total_wait_periods) {
+		this->total_wait_periods = total_wait_periods;
+	}
+
 	void reset() {
 			remaining_time = duration;
 	}
@@ -126,6 +135,7 @@ private:
 	int remaining_time;
 	int pid;
 	int total_turnaround_time;
+	int total_wait_periods;
 	uint64_t *registers;
 	uint64_t SP;
 	uint64_t PC;
