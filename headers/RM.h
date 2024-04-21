@@ -10,12 +10,10 @@
 
 using namespace std::chrono;
 
-class RM
+class RM : public Scheduler
 {
 public:
-    RM(CPU *cpu) {
-        this->cpu = cpu;
-    }
+    RM(CPU *cpu) : Scheduler(cpu) {}
 
     void execute() {
         File f;
@@ -36,11 +34,13 @@ public:
             if (ready_processes.size() == 0 && std::any_of(process_table.begin(), process_table.end(), [](ProcessControlBlock *p)
                                                            { return p->get_iterations() > 0; })) {
                 bool deadline = deadline_at_current_time();
-                if (!deadline) {
+                bool process_created = process_created_at_current_time();
+                if (!deadline && !process_created) {
                     this->cpu->delay();
                     this->print_current_status(); 
                     current_time++;
                     deadline = deadline_at_current_time();
+                    process_created = process_created_at_current_time();
                 }
                 continue;
             }
@@ -61,13 +61,13 @@ public:
             auto start = high_resolution_clock::now();
             Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
-            // if (!deadline) printf("Process %d with priority %d started \n", current_time, p->get_pid(), p->get_priority());
-            while (pcb->get_remaining_time() > 0 && !deadline) {
+            bool process_created = process_created_at_current_time();
+            while (pcb->get_remaining_time() > 0 && !deadline && !process_created) {
                 this->cpu->run_process();
-                // printf("Process %d with priority %d has %d seconds left\n", current_time, p->get_pid(), p->get_priority(), p->get_remaining_time());
                 this->print_current_status(p); 
                 current_time++;
                 deadline = deadline_at_current_time();
+                process_created = process_created_at_current_time();
             }
             // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
             this->cpu->stop_process();
@@ -78,25 +78,8 @@ public:
             // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
     }
-private:
-    void print_current_status(Process* current = nullptr) {
-        if (current_time < 9) printf("\n %d-%d  ", current_time, current_time+1);
-        else if (current_time == 9) printf("\n %d-%d ", current_time, current_time+1);
-        else printf("\n%d-%d ", current_time, current_time+1);
 
-        for (auto i = 0u; i < process_table.size(); i++) {
-            if (current != nullptr && current->get_pid() == (int) i) {
-                printf("## ");
-            } else {
-                if (process_table[i]->get_iterations() > 0 && (process_table[i]->get_creation_time() <= current_time || process_table[i]->get_remaining_time() == 0)) {
-                    printf("-- ");
-                    process_table[i]->set_total_wait_periods(process_table[i]->get_total_wait_periods() + 1);
-                } else {
-                    printf("   ");
-                }
-            }            
-        }
-    }
+protected:
 
     std::vector<ProcessControlBlock *> sort_by_priority(std::vector<ProcessControlBlock *> process_table) {
         std::sort(process_table.begin(), process_table.end(), [](ProcessControlBlock *a, ProcessControlBlock *b) {
@@ -117,61 +100,6 @@ private:
         }
         return sort_by_priority(ready_processes);
     }
-
-    void organize_processes_by_start_time() {
-        for (auto i = 0u; i < process_table.size(); i++) {
-            ProcessControlBlock *pcb = process_table[i];
-
-            while (pcb->get_creation_time() >= (int) processes_by_start_time.size()) {
-                processes_by_start_time.push_back(std::vector<ProcessControlBlock *>());
-            }
-            processes_by_start_time[pcb->get_creation_time()].push_back(pcb);
-
-        }
-    }
-
-    void list_deadlines() {
-        for (auto i = 0u; i < process_table.size(); i++) {
-            deadlines.push_back({process_table[i], process_table[i]->get_deadline()});
-        }
-        std::sort(deadlines.begin(), deadlines.end());
-    }
-
-    bool deadline_at_current_time() {
-        if (deadline_accounted) {
-            deadline_accounted = false;
-            return false;
-        }
-        for (std::pair<ProcessControlBlock*, int> deadline : deadlines) {
-            if (current_time - deadline.first->get_creation_time() > 0
-                && (current_time - deadline.first->get_creation_time()) % deadline.second == 0 
-                && current_time != 0) {
-                if (deadline.first->get_remaining_time() == 0) {
-                    printf("\x1b[32mEnd of period for P%d; \x1b[0m", deadline.first->get_pid());
-                    deadline.first->dec_iterations();
-                    printf("Iterations left for P%d: %d; ", deadline.first->get_pid(), deadline.first->get_iterations());
-                    if (deadline.first->get_iterations() == 0) {
-                        printf("\x1b[32mProcess P%d has finished all iterations; \x1b[0m", deadline.first->get_pid());
-                    }
-                } else if (deadline.first->get_iterations() > 0) {
-                    printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
-                    deadlines_missed++;
-                    printf("Number of deadlines missed: %d; ", deadlines_missed);
-                }
-                deadline.first->reset();
-                deadline_accounted = true;
-            }
-        }
-        return deadline_accounted;
-    }
-
-    CPU* cpu;
-    int current_time = 0;
-    std::vector<std::vector<ProcessControlBlock *>> processes_by_start_time;
-    std::vector<ProcessControlBlock *> process_table;
-    std::vector<std::pair<ProcessControlBlock*, int>> deadlines;
-    bool deadline_accounted = false;
-    int deadlines_missed = 0;
 };
 
 #endif
