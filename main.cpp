@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 		printf("Initializing EDF scheduler\n");
 		EDF* edf = new EDF(cpu);
 		edf->execute();
-	}	else if (strcmp(argv[1], "rm") == 0) {
+	}	else {
 		printf("Initializing RM scheduler\n");
 		RM* rm = new RM(cpu);
 		rm->execute();

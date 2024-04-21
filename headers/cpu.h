@@ -18,8 +18,12 @@ public:
     }
 
     void run_process() {
-        sleep(1);
+        this->delay();
         currentProcess->run();
+    }
+
+    void delay() {
+        sleep(0.5);
     }
 
     Process *set_process(ProcessControlBlock *pcb) {
