@@ -10,16 +10,23 @@
 int main(int argc, char **argv)
 {
 	CPU* cpu = new CPU();
-	if (strcmp(argv[1], "edf") == 0) {
+	printf("Qual algoritmo deseja utilizar?\n");
+	printf("1 - RM\n");
+	printf("2 - EDF\n");
+	int alg;
+	scanf("%d", &alg);
+	if (alg == 2) {
 		printf("Initializing EDF scheduler\n");
 		EDF* edf = new EDF(cpu);
 		edf->execute();
 		delete edf;
-	}	else {
+	}	else if (alg == 1){
 		printf("Initializing RM scheduler\n");
 		RM* rm = new RM(cpu);
 		rm->execute();
 		delete rm;
+	} else {
+		printf("Insira apenas 1 ou 2\n");
 	}
 	delete cpu;
 }
