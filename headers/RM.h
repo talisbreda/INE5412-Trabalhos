@@ -38,6 +38,8 @@ public:
                 bool deadline = deadline_at_current_time();
                 if (!deadline) {
                     this->cpu->delay();
+                    if (this->cpu->get_process() != nullptr)
+                        this->cpu->stop_process();
                     this->print_current_status(); 
                     current_time++;
                     deadline = deadline_at_current_time();
@@ -55,27 +57,32 @@ public:
                     printf("P%d: Total wait periods: %d\n", pcb->get_pid(), pcb->get_total_wait_periods());
                 }
                 printf("Average turnaround time: %ldus\n", avg_turnaround_time / process_table.size());
+                printf("Number of context switches: %d\n", context_switches);
                 break;
             }
+
             ProcessControlBlock *pcb = ready_processes[0];
-            auto start = high_resolution_clock::now();
-            Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
-            // if (!deadline) printf("Process %d with priority %d started \n", current_time, p->get_pid(), p->get_priority());
+
+            if (pcb->get_remaining_time() > 0 && !deadline) {
+                Process *currentProcess = this->cpu->get_process();
+                if (currentProcess != nullptr && pcb->get_pid() != currentProcess->get_pid()) {
+                    this->cpu->stop_process();
+                    this->cpu->set_process(pcb);
+                    context_switches++;
+                } else if (currentProcess == nullptr) {
+                    context_switches++;
+                    this->cpu->set_process(pcb);
+                }
+            }
+
             while (pcb->get_remaining_time() > 0 && !deadline) {
                 this->cpu->run_process();
                 // printf("Process %d with priority %d has %d seconds left\n", current_time, p->get_pid(), p->get_priority(), p->get_remaining_time());
-                this->print_current_status(p); 
+                this->print_current_status(this->cpu->get_process()); 
                 current_time++;
                 deadline = deadline_at_current_time();
             }
-            // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
-            this->cpu->stop_process();
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-
-            pcb->set_total_turnaround_time(pcb->get_total_turnaround_time() + duration.count());
-            // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
     }
 private:
@@ -172,6 +179,7 @@ private:
     std::vector<std::pair<ProcessControlBlock*, int>> deadlines;
     bool deadline_accounted = false;
     int deadlines_missed = 0;
+    int context_switches = 0;
 };
 
 #endif
