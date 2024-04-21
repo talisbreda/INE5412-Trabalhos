@@ -57,6 +57,7 @@ public:
                     printf("P%d: Total turnaround time: %dus\n", pcb->get_pid(), pcb->get_total_turnaround_time());
                     avg_turnaround_time += pcb->get_total_turnaround_time();
                     printf("P%d: Total wait periods: %d\n", pcb->get_pid(), pcb->get_total_wait_periods());
+                    printf("P%d: Lost deadlines: %d\n", pcb->get_pid(), pcb->get_lost_deadlines());
                 }
                 printf("Average turnaround time: %ldus\n", avg_turnaround_time / process_table.size());
                 printf("Number of context switches: %d\n", context_switches);
@@ -190,6 +191,7 @@ private:
                     }
                 } else if (deadline.first->get_iterations() > 0) {
                     printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
+                    deadline.first->set_lost_deadlines(deadline.first->get_lost_deadlines() + 1);
                     deadlines_missed++;
                 }
                 deadline.first->reset();
