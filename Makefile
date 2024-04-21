@@ -8,7 +8,7 @@ CFLAGS = -Wall -g
 INCLUDES = -I./headers
 
 # Define the source file(s)
-SRCS = main.cpp
+SRCS = ./source/main.cpp ./source/EDF.cpp ./source/RM.cpp ./source/scheduler.cpp ./source/process_control_block.cpp ./source/process.cpp ./source/CPU.cpp
 
 # Define the output binary 
 TARGET = main

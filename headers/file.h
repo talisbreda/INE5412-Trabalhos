@@ -38,7 +38,7 @@ public:
 
 		for(; iter < processes.end(); iter++) {
 			ProcessControlBlock *p = *iter;
-			std::cout << *p;
+			printf("Creation time: %d | Duration: %d | Period: %d | Deadline: %d | Priority: %d | Iterations: %d\n", p->get_creation_time(), p->get_duration(), p->get_period(), p->get_deadline(), p->get_priority(), p->get_iterations());
 		}
 	}
 
