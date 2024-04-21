@@ -16,10 +16,10 @@ public:
     RM(CPU *cpu) : Scheduler(cpu) {}
 
     void execute() {
-        File f;
-        f.read_file();
-        f.print_processes_params();
-        this->process_table = f.get_processes();
+        File* f = new File();
+        f->read_file();
+        f->print_processes_params();
+        this->process_table = f->get_processes();
         for (auto i = 0u; i < process_table.size(); i++) {
             process_table[i]->set_pid(i);;
         }
@@ -77,6 +77,7 @@ public:
             pcb->set_total_turnaround_time(pcb->get_total_turnaround_time() + duration.count());
             // printf("\npcb context after process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
         }
+        delete f;
     }
 
 protected:

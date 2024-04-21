@@ -124,6 +124,10 @@ public:
 		os << "Creation time = " << p.creation_time << " duration = " << p.duration << " priority = " << p.priority << " period = " << p.period << " deadline = " << p.deadline << " iterations = " << p.iterations << std::endl;
 		return os;
 	}
+
+	~ProcessControlBlock() {
+		delete[] registers;
+	}
 	
 private:	
 	int creation_time;
