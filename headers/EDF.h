@@ -36,11 +36,13 @@ public:
             if (ready_processes.size() == 0 && std::any_of(process_table.begin(), process_table.end(), [](ProcessControlBlock *p)
                                                            { return p->get_iterations() > 0; })) {
                 bool deadline = deadline_at_current_time();
-                if (!deadline) {
+                bool process_created = process_created_at_current_time();
+                if (!deadline && !process_created) {
                     this->cpu->delay();
                     this->print_current_status(); 
                     current_time++;
                     deadline = deadline_at_current_time();
+                    process_created = process_created_at_current_time();
                 }
                 continue;
             }
@@ -61,13 +63,13 @@ public:
             auto start = high_resolution_clock::now();
             Process *p = this->cpu->set_process(pcb);
             bool deadline = deadline_at_current_time();
-            // if (!deadline) printf("Process %d with priority %d started \n", current_time, p->get_pid(), p->get_priority());
-            while (pcb->get_remaining_time() > 0 && !deadline) {
+            bool process_created = process_created_at_current_time();
+            while (pcb->get_remaining_time() > 0 && !deadline && !process_created) {
                 this->cpu->run_process();
-                // printf("Process %d with priority %d has %d seconds left\n", current_time, p->get_pid(), p->get_priority(), p->get_remaining_time());
                 this->print_current_status(p); 
                 current_time++;
                 deadline = deadline_at_current_time();
+                process_created = process_created_at_current_time();
             }
             // printf("\npcb context before process %d ends: SP: %ld; PC: %ld", pcb->get_pid(), (long)pcb->get_SP(), (long)pcb->get_PC());
             this->cpu->stop_process();
@@ -141,7 +143,7 @@ private:
                 }
             }
         }
-        return sort_by_deadline(ready_processes); 
+        return sort_by_earliest_deadline(ready_processes); 
     }
 
     void organize_processes_by_start_time() {
@@ -182,7 +184,6 @@ private:
                 } else if (deadline.first->get_iterations() > 0) {
                     printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
                     deadlines_missed++;
-                    printf("Number of deadlines missed: %d; ", deadlines_missed);
                 }
                 deadline.first->reset();
                 deadline_accounted = true;
@@ -191,12 +192,23 @@ private:
         return deadline_accounted;
     }
 
+    bool process_created_at_current_time() {
+        if (creation_accounted) {
+            creation_accounted = false;
+            return false;
+        }
+        if (current_time >= (int) processes_by_start_time.size()) return false;
+        creation_accounted = processes_by_start_time[current_time].size() > 0;
+        return creation_accounted;
+    }
+
     CPU* cpu;
     int current_time = 0;
     std::vector<std::vector<ProcessControlBlock *>> processes_by_start_time;
     std::vector<ProcessControlBlock *> process_table;
     std::vector<std::pair<ProcessControlBlock*, int>> deadlines;
     bool deadline_accounted = false;
+    bool creation_accounted = false;
     int deadlines_missed = 0;
 };
 
