@@ -7,12 +7,13 @@
 class ProcessControlBlock
 {
 public:
-	ProcessControlBlock(int start_time, int duration, int period, int deadline, int priority, int pid) { 
+	ProcessControlBlock(int start_time, int duration, int period, int deadline, int priority, int iterations, int pid) { 
 		this->creation_time = start_time;
 		this->duration = duration;
 		this->period = period;
 		this->deadline = deadline;
 		this->priority = priority;
+		this->iterations = iterations;
 		this->remaining_time = duration;
 		this->pid = -1;
 		this->registers = new uint64_t[6];
@@ -43,6 +44,10 @@ public:
 
 	int get_remaining_time() {
 		return remaining_time;
+	}
+
+	int get_iterations() {
+		return iterations;
 	}
 
 	int get_pid() {
@@ -85,6 +90,10 @@ public:
 		remaining_time--;
 	}
 
+	void dec_iterations() {
+		iterations--;
+	}
+
 	void set_pid(int pid) {
 		this->pid = pid;
 	}
@@ -94,7 +103,7 @@ public:
 	}
 
 	friend std::ostream &operator<<(std::ostream& os, const ProcessControlBlock& p) {
-		os << "Creation time = " << p.creation_time << " duration = " << p.duration << " priority = " << p.priority << " period = " << p.period << " deadline = " << p.deadline << std::endl;
+		os << "Creation time = " << p.creation_time << " duration = " << p.duration << " priority = " << p.priority << " period = " << p.period << " deadline = " << p.deadline << " iterations = " << p.iterations << std::endl;
 		return os;
 	}
 	
@@ -104,6 +113,7 @@ private:
 	int period;
 	int deadline;
 	int priority;
+	int iterations;
 	int remaining_time;
 	int pid;
 	uint64_t *registers;

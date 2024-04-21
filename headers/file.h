@@ -19,14 +19,14 @@ public:
 	
 	void read_file() {
 	
-		int start_time, duration, period, deadline, priority;
+		int start_time, duration, period, deadline, priority, iterations;
 		
 		if (!myfile.is_open()) {
 			std::cout << "Arquivo não está aberto!" << std::endl;
 		}
 		
-		while (myfile >> start_time >> duration >> period >> deadline >> priority) {
-			ProcessControlBlock *p = new ProcessControlBlock(start_time, duration, period, deadline, priority, -1);
+		while (myfile >> start_time >> duration >> period >> deadline >> priority >> iterations) {
+			ProcessControlBlock *p = new ProcessControlBlock(start_time, duration, period, deadline, priority, iterations, -1);
 			processes.push_back(p);
 		}
 

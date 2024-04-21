@@ -30,8 +30,20 @@ public:
         }
         while (true) {
             std::vector<ProcessControlBlock *> ready_processes = get_ready_processes();
-            if (ready_processes.size() == 0) {
-                printf("No processes to run\n");
+            if (ready_processes.size() == 0 && std::any_of(process_table.begin(), process_table.end(), [](ProcessControlBlock *p)
+                                                           { return p->get_iterations() > 0; })) {
+                bool deadline = deadline_at_current_time();
+                if (!deadline) {
+                    this->cpu->delay();
+                    this->print_current_status(); 
+                    current_time++;
+                    deadline = deadline_at_current_time();
+                }
+                continue;
+            }
+            else if (ready_processes.size() == 0)
+            {
+                printf("\nNo processes to run\n");
                 break;
             }
             ProcessControlBlock *pcb = ready_processes[0];
@@ -51,13 +63,13 @@ public:
         }
     }
 private:
-    void print_current_status(Process* current) {
+    void print_current_status(Process* current = nullptr) {
         if (current_time < 9) printf("\n %d-%d  ", current_time, current_time+1);
         else if (current_time == 9) printf("\n %d-%d ", current_time, current_time+1);
         else printf("\n%d-%d ", current_time, current_time+1);
 
         for (auto i = 0u; i < process_table.size(); i++) {
-            if (current->get_pid() == (int) i) {
+            if (current != nullptr && current->get_pid() == (int) i) {
                 printf("## ");
             } else {
                 if (process_table[i]->get_creation_time() <= current_time || process_table[i]->get_remaining_time() == 0) {
@@ -81,7 +93,7 @@ private:
         for (int i = 0; i <= this->current_time && i < (int) processes_by_start_time.size(); i++) {
             for (auto j = 0u; j < processes_by_start_time[i].size(); j++) {
                 ProcessControlBlock *p = processes_by_start_time[i][j];
-                if (p->get_remaining_time() > 0) {
+                if (p->get_remaining_time() > 0 && p->get_iterations() > 0) {
                     ready_processes.push_back(p);
                 }
             }
@@ -119,7 +131,12 @@ private:
                 && current_time != 0) {
                 if (deadline.first->get_remaining_time() == 0) {
                     printf("\x1b[32mEnd of period for P%d; \x1b[0m", deadline.first->get_pid());
-                } else {
+                    deadline.first->dec_iterations();
+                    printf("Iterations left for P%d: %d; ", deadline.first->get_pid(), deadline.first->get_iterations());
+                    if (deadline.first->get_iterations() == 0) {
+                        printf("\x1b[32mProcess P%d has finished all iterations; \x1b[0m", deadline.first->get_pid());
+                    }
+                } else if (deadline.first->get_iterations() > 0) {
                     printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
                     deadlines_missed++;
                     printf("Number of deadlines missed: %d; ", deadlines_missed);
