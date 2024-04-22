@@ -1,6 +1,9 @@
 #include <math.h>
 #include <process_control_block.h>
 #include "process.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 Process::Process(ProcessControlBlock *pcb) {
     this->pcb = pcb;
@@ -15,6 +18,8 @@ Process::Process(ProcessControlBlock *pcb) {
     this->SP = pcb->get_SP();
     this->PC = pcb->get_PC();
     this->ST = pcb->get_ST();
+    this->start_time = high_resolution_clock::now();
+    printf("Instantiating process %d", pid);
 }
 
 uint64_t Process::generate_random_number() {
@@ -61,6 +66,9 @@ void Process::set_state(State state) {
 }
 
 Process::~Process() {
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start_time);
+    pcb->set_total_turnaround_time(pcb->get_total_turnaround_time() + duration.count());
     pcb->set_registers(registers);
     pcb->set_SP(SP);
     pcb->set_PC(PC);

@@ -75,6 +75,7 @@ bool Scheduler::deadline_at_current_time() {
                 }
             } else if (deadline.first->get_iterations() > 0) {
                 printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());
+                deadline.first->set_lost_deadlines(deadline.first->get_lost_deadlines() + 1);
                 deadlines_missed++;
             }
             deadline.first->reset();
