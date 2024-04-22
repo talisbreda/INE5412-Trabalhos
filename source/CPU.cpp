@@ -17,6 +17,10 @@ void CPU::run_process() {
     this->delay();
     currentProcess->set_state(RUNNING);
     currentProcess->run();
+    this->set_PC(currentProcess->get_pcb()->get_PC());
+    this->set_SP(currentProcess->get_pcb()->get_SP());
+    this->set_ST(currentProcess->get_pcb()->get_ST());
+    this->set_registers(currentProcess->get_pcb()->get_registers());
 }
 
 void CPU::delay() {
@@ -38,6 +42,7 @@ void CPU::stop_process() {
     } else {
         currentProcess->set_state(READY);
     }
+    this->reset_registers();
     delete this->currentProcess;
     currentProcess = nullptr;
 }
@@ -62,6 +67,15 @@ void CPU::set_PC(uint64_t PC) {
 
 void CPU::set_ST(uint64_t ST) {
     this->ST = ST;
+}
+
+void CPU::reset_registers() {
+    this->set_PC(0);
+    this->set_SP(0);
+    this->set_ST(0);
+    for (int i = 0; i < 6; i++) {
+        this->registers[i] = 0;
+    }
 }
 
 uint64_t *CPU::get_registers() {

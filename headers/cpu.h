@@ -36,6 +36,8 @@ public:
 
     void set_ST(uint64_t ST);
 
+    void reset_registers();
+
     uint64_t *get_registers();
 
     uint64_t get_SP();

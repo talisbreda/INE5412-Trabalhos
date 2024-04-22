@@ -18,6 +18,7 @@ public:
     int get_remaining_time();
     int get_priority(); 
     int get_creation_time();
+    ProcessControlBlock* get_pcb();
     void set_remaining_time(int remaining_time);
     void reset();
     void set_state(State state);

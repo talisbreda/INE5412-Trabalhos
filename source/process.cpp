@@ -37,6 +37,10 @@ void Process::run() {
     ST = generate_random_number();
 }
 
+ProcessControlBlock *Process::get_pcb() {
+    return pcb;
+}
+
 int Process::get_pid() {
     return pid;
 }
