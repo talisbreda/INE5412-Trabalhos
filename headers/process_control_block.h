@@ -26,6 +26,7 @@ public:
 	int get_pid();
 	int get_total_turnaround_time();
 	int get_total_wait_periods();
+	int get_lost_deadlines();
 	State get_state();
 	uint64_t *get_registers();
 	uint64_t get_SP();
@@ -41,6 +42,7 @@ public:
 	void set_total_turnaround_time(int total_turnaround_time);
 	void set_total_wait_periods(int total_wait_periods);
 	void set_state(State state);
+	void set_lost_deadlines(int lost_deadlines);
 	void reset();
 
 	~ProcessControlBlock();
@@ -56,6 +58,7 @@ private:
 	int pid;
 	int total_turnaround_time;
 	int total_wait_periods;
+	int lost_deadlines;
 	uint64_t *registers;
 	uint64_t SP;
 	uint64_t PC;

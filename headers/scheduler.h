@@ -26,6 +26,7 @@ protected:
     bool deadline_accounted = false;
     bool creation_accounted = false;
     int deadlines_missed = 0;
+    int context_switches = 0;
 };
 
 
