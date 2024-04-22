@@ -3,6 +3,9 @@
 
 #include <math.h>
 #include <process_control_block.h>
+#include <chrono>
+
+using namespace std::chrono;
 
 class Process 
 {
@@ -33,6 +36,7 @@ private:
     uint64_t SP;
     uint64_t PC;
     uint64_t ST;
+    high_resolution_clock::time_point start_time;
 };
 
 #endif
