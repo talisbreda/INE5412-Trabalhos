@@ -14,6 +14,10 @@ void RM::execute() {
     f.read_file();
     f.print_processes_params();
     this->process_table = f.get_processes();
+    if (this->process_table.size() == 0) {
+        printf("No processes to run\n");
+        return;
+    }
     for (auto i = 0u; i < process_table.size(); i++) {
         process_table[i]->set_pid(i);;
     }

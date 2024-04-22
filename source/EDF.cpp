@@ -15,6 +15,10 @@ void EDF::execute() {
     for (auto i = 0u; i < process_table.size(); i++) {
         process_table[i]->set_pid(i);;
     }
+    if (this->process_table.size() == 0) {
+        printf("No processes to run\n");
+        return;
+    }
     this->organize_processes_by_start_time();
     this->list_deadlines();
     printf("tempo ");

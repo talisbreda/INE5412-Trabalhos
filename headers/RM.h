@@ -22,8 +22,6 @@ public:
     RM(CPU *cpu) : Scheduler(cpu) {}
 
     void execute();
-
-
 };
 
 #endif
