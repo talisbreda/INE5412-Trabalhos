@@ -70,6 +70,8 @@ bool Scheduler::deadline_at_current_time() {
                 printf("Iterations left for P%d: %d; ", deadline.first->get_pid(), deadline.first->get_iterations());
                 if (deadline.first->get_iterations() == 0) {
                     printf("\x1b[32mProcess P%d has finished all iterations; \x1b[0m", deadline.first->get_pid());
+                } else {
+                    deadline.first->set_state(READY);
                 }
             } else if (deadline.first->get_iterations() > 0) {
                 printf("\x1b[31mDeadline missed for P%d; \x1b[0m", deadline.first->get_pid());

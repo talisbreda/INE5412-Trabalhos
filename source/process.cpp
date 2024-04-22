@@ -56,6 +56,10 @@ void Process::reset() {
     remaining_time = duration;
 }
 
+void Process::set_state(State state) {
+    pcb->set_state(state);
+}
+
 Process::~Process() {
     pcb->set_registers(registers);
     pcb->set_SP(SP);

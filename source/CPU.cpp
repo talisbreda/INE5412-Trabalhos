@@ -15,6 +15,7 @@ CPU::CPU() {
 
 void CPU::run_process() {
     this->delay();
+    currentProcess->set_state(RUNNING);
     currentProcess->run();
 }
 
@@ -32,6 +33,11 @@ Process *CPU::get_process() {
 }
 
 void CPU::stop_process() {
+    if (currentProcess->get_remaining_time() == 0) {
+        currentProcess->set_state(TERMINATED);
+    } else {
+        currentProcess->set_state(READY);
+    }
     delete this->currentProcess;
     currentProcess = nullptr;
 }

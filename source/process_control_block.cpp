@@ -17,6 +17,7 @@ ProcessControlBlock::ProcessControlBlock(int start_time, int duration, int perio
     this->ST = 0;
     this->total_turnaround_time = 0;
     this->total_wait_periods = 0;
+    this->state = NEW;
 }
 
 int ProcessControlBlock::get_creation_time() {
@@ -57,6 +58,10 @@ int ProcessControlBlock::get_total_turnaround_time() {
 
 int ProcessControlBlock::get_total_wait_periods() {
     return total_wait_periods;
+}
+
+State ProcessControlBlock::get_state() {
+    return state;
 }
 
 uint64_t* ProcessControlBlock::get_registers() {
@@ -113,6 +118,10 @@ void ProcessControlBlock::set_total_wait_periods(int total_wait_periods) {
 
 void ProcessControlBlock::reset() {
     remaining_time = duration;
+}
+
+void ProcessControlBlock::set_state(State state) {
+    this->state = state;
 }
 
 ProcessControlBlock::~ProcessControlBlock() {
