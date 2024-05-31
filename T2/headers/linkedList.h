@@ -8,11 +8,14 @@ public:
     DoublyLinkedList();
     ~DoublyLinkedList();
 
-    void insertFront(int data_size, int ID);
-    void insertBack(int data_size, int ID);
-    void remove(int ID);
+    void insert_front(Node* node);
+    void insert_back(Node* node);
+    void remove(Node* node);
+    void remove_front();
     void print_list() const;
-    int getSize() cont;
+    int get_size() const;
+    Node* get_head() const;
+    void insert_after(Node* newNode, Node* currentNode);
 
 private:
     Node* head;

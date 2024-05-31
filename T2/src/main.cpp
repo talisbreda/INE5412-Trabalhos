@@ -2,15 +2,15 @@
 #include <array_list.h>
 #include <operation.h>
 #include <bitmap.h>
-#include <list.h>
+#include <list_managment.h>
 
 int main(int argc, char const *argv[])
 {
-    Bitmap b;
-    b.bitmapManaging();
+    //Bitmap b;
+    //b.bitmapManaging();
 
-    LinkedList l;
-    l.linkedListing();
+    ListManagment l;
+    l.execute();
 
     return 0;
 }

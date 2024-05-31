@@ -3,28 +3,25 @@
 
 #include <allocator.h>
 #include <Node.h>
-#include <LinkedList.h>
+#include <linkedList.h>
+#include <file.h>
 
 class ListManagment : public Allocator {
 public:
-    ListManagment() : Allocator(), freeBlocks() {}
-    ListManagment(int size, int blockSize, int algorithm) : Allocator(size, blockSize, algorithm), freeBlocks() {
+    ListManagment() : Allocator() {
         // Inicializa a lista de blocos livres
-        int numBlocks = size / blockSize;
-        for (int i = 0; i < numBlocks; ++i) {
-            freeBlocks.(i);  // Corrigir. A função aqui não deve ser a Allocate
-        }
+        Node* bloco = new Node(this->size, -1);
+        memory_list.insert_back(bloco);
     }
 
-    int getMemorySize() const { return freeBlocks.getSize(); }
-    int getBlockSize() const { return freeBlocks.getBlockSize(); }
-    int getAlgorithm() const { return freeBlocks.getAlgorithm(); }
-    int allocateBlock(int program_size, int ID);
-    void deallocateBlock(int blockIndex);
-    void printFreeBlocks() const { freeBlocks.print_list(); }
+
+    void execute();
+    void allocate_block(int program_size, int program_id, int block_size);
+    void deallocate_block(int program_id);
+    void print_list();
 
 private:
-    LinkedList freeBlocks;
+    DoublyLinkedList memory_list;
 };
 
 #endif
