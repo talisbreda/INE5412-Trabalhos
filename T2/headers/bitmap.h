@@ -17,6 +17,7 @@ public:
     int getBlockSize() { return this->blockSize; }
     int getAlgorithm() { return this->algorithm; }
     void bitmapManaging();
+    void printSummary();
 
 private:
     char *bitmap;

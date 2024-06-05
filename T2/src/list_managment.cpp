@@ -72,3 +72,40 @@ void ListManagment::print_list(){
         current = current->next;
     }
 }
+
+void ListManagment::printSummary() {
+    int usedBytes = 0;
+    int allocatedBytes = 0;
+    int deallocatedBytes = 0;
+
+    Node* current = memory_list.get_head();
+    while (current != nullptr) {
+        if (current->ID != -1) {
+            usedBytes += current->data_size;
+            allocatedBytes += current->data_size;
+        } else {
+            deallocatedBytes += current->data_size;
+        }
+        current = current->next;
+    }
+
+    std::cout << usedBytes << std::endl;
+    std::cout << allocatedBytes << std::endl;
+    std::cout << deallocatedBytes << std::endl;
+
+
+    OperationList operations = this->file.getOperations();
+    int allocations = 0;
+    int deallocations = 0;
+
+    for (auto i = 0u; i < operations.size(); i++) {
+        if (operations[i]->getType() == 0) {
+            allocations++;
+        } else if (operations[i]->getType() == 1) {
+            deallocations++;
+        }
+    }
+
+    std::cout << allocations << std::endl;
+    std::cout << deallocations << std::endl;
+}

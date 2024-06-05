@@ -6,11 +6,24 @@
 
 int main(int argc, char const *argv[])
 {
-    //Bitmap b;
-    //b.bitmapManaging();
 
-    ListManagment l;
-    l.execute();
+    File f;
+    f.read_file();
+
+    if (f.getType() == 1)
+    {
+        Bitmap b;
+        b.bitmapManaging();
+        printf("\n");
+        b.printSummary();
+    }
+    else if (f.getType() == 2)
+    {
+        ListManagment l;
+        l.execute();
+        printf("\n");
+        l.printSummary();
+    }
 
     return 0;
 }

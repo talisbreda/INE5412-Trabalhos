@@ -32,7 +32,6 @@ void Bitmap::bitmapManaging() {
             if (count == blocksUsed) {
                 op->setStart(start);
                 op->setBlocksSize(blocksUsed);
-                printf("%d %d\n", start, blocksUsed);
                 for (auto j = start; j < start + blocksUsed; j++) {
                     this->bitmap[j] = 1;
                 }
@@ -45,7 +44,6 @@ void Bitmap::bitmapManaging() {
             Operation* allocatedOp = operations.findById(id);
             int start = allocatedOp->getStart();
             int blocksSize = allocatedOp->getBlocksSize();
-            printf("%d %d\n", start, blocksSize);
             for (auto j = start; j < start+blocksSize; j++) {
                 this->bitmap[j] = 0;
             }
@@ -55,4 +53,38 @@ void Bitmap::bitmapManaging() {
         printf("%d", this->bitmap[i]);
     }
     std::cout << std::endl;
+}
+
+void Bitmap::printSummary() {
+    int usedBytes = 0;
+    int allocatedBytes = 0;
+    int deallocatedBytes = 0;
+
+    for (auto i = 0; i < this->blocks; i++) {
+        if (this->bitmap[i] == 1) {
+            usedBytes += this->blockSize;
+        } else if (this->bitmap[i] == 0) {
+            deallocatedBytes += this->blockSize;
+        }
+        allocatedBytes += this->blockSize;
+    }
+
+    std::cout << usedBytes << std::endl;
+    std::cout << allocatedBytes << std::endl;
+    std::cout << deallocatedBytes << std::endl;
+
+    int allocations = 0;
+    int deallocations = 0;
+    OperationList operations = this->file.getOperations();
+
+    for (auto i = 0u; i < operations.size(); i++) {
+        if (operations[i]->getType() == 0) {
+            allocations++;
+        } else if (operations[i]->getType() == 1) {
+            deallocations++;
+        }
+    }
+
+    std::cout << allocations << std::endl;
+    std::cout << deallocations << std::endl;
 }

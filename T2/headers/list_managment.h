@@ -19,6 +19,7 @@ public:
     void allocate_block(int program_size, int program_id, int block_size);
     void deallocate_block(int program_id);
     void print_list();
+    void printSummary();
 
 private:
     DoublyLinkedList memory_list;
