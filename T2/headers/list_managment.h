@@ -3,12 +3,13 @@
 
 #include <allocator.h>
 #include <Node.h>
+#include <operation_list.h>
 #include <linkedList.h>
 #include <file.h>
 
 class ListManagment : public Allocator {
 public:
-    ListManagment() : Allocator() {
+    ListManagment(int size, int blockSize, int algorithm, OperationList operations) : Allocator(size, blockSize, algorithm, operations) {
         // Inicializa a lista de blocos livres
         Node* bloco = new Node(this->size, -1);
         memory_list.insert_back(bloco);

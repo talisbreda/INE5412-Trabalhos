@@ -1,8 +1,8 @@
 #include <bitmap.h>
-#include <file.h>
+#include <operation_list.h>
 
 void Bitmap::bitmapManaging() {
-    OperationList operations = this->file.getOperations();
+    OperationList operations = this->operations;
     for (auto i = 0u; i < operations.size(); i++) {
         Operation* op = operations[i];
         if (op->getType() == 0) {
@@ -75,7 +75,7 @@ void Bitmap::printSummary() {
 
     int allocations = 0;
     int deallocations = 0;
-    OperationList operations = this->file.getOperations();
+    OperationList operations = this->operations;
 
     for (auto i = 0u; i < operations.size(); i++) {
         if (operations[i]->getType() == 0) {

@@ -1,10 +1,11 @@
 #include <list_managment.h>
+#include <operation_list.h>
 #include <linkedList.h>
 #include <file.h>
 #include <algorithm>
 
 void ListManagment::execute(){  
-    OperationList operations = this->file.getOperations();
+    OperationList operations = this->operations;
     for (auto i = 0u; i < operations.size(); i++){
         Operation* op = operations[i];
         if (op->getType() == 0){
@@ -94,7 +95,7 @@ void ListManagment::printSummary() {
     std::cout << deallocatedBytes << std::endl;
 
 
-    OperationList operations = this->file.getOperations();
+    OperationList operations = this->operations;
     int allocations = 0;
     int deallocations = 0;
 

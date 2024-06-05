@@ -1,5 +1,4 @@
 #include <file.h>
-#include <array_list.h>
 #include <operation.h>
 #include <bitmap.h>
 #include <list_managment.h>
@@ -12,14 +11,14 @@ int main(int argc, char const *argv[])
 
     if (f.getType() == 1)
     {
-        Bitmap b;
+        Bitmap b = Bitmap(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm(), f.getOperations());
         b.bitmapManaging();
         printf("\n");
         b.printSummary();
     }
     else if (f.getType() == 2)
     {
-        ListManagment l;
+        ListManagment l = ListManagment(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm(), f.getOperations());
         l.execute();
         printf("\n");
         l.printSummary();

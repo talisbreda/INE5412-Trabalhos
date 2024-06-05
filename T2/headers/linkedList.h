@@ -16,12 +16,11 @@ public:
     int get_size() const;
     Node* get_head() const;
     void insert_after(Node* newNode, Node* currentNode);
+    void clear();
 
 private:
     Node* head;
     Node* tail;
-
-    void clear();
 };
 
 #endif
