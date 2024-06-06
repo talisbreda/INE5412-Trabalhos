@@ -84,10 +84,10 @@ void ListManagment::printSummary() {
     while (current != nullptr) {
         if (current->ID != -1) {
             usedBytes += current->data_size;
-            allocatedBytes += current->data_size;
         } else {
             deallocatedBytes += current->data_size;
         }
+        allocatedBytes += current->data_size;
         current = current->next;
     }
 
