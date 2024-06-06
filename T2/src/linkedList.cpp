@@ -1,5 +1,6 @@
 #include <linkedList.h>
 #include <iostream>
+#include <Node.h>
 
 // Construtor padrão
 DoublyLinkedList::DoublyLinkedList() : head(nullptr), tail(nullptr) {}

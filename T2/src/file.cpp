@@ -1,4 +1,5 @@
 #include <file.h>
+#include <operation.h>
 
 File::File() {
     myfile.open("entrada.txt");

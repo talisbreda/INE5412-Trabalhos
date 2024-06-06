@@ -2,6 +2,7 @@
 #include <operation.h>
 #include <bitmap.h>
 #include <list_managment.h>
+#include <stdio.h>
 
 int main(int argc, char const *argv[])
 {

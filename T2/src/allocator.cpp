@@ -1,5 +1,6 @@
 #include <allocator.h>
 #include <file.h>
+#include <operation_list.h>
 
 Allocator::Allocator(int size, int blockSize, int algorithm, OperationList operations) {
     this->size = size;

@@ -1,5 +1,6 @@
 #include <bitmap.h>
 #include <operation_list.h>
+#include <iostream>
 
 void Bitmap::bitmapManaging() {
     OperationList operations = this->operations;

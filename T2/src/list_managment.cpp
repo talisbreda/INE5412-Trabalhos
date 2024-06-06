@@ -3,6 +3,7 @@
 #include <linkedList.h>
 #include <file.h>
 #include <algorithm>
+#include <Node.h>
 
 void ListManagment::execute(){  
     OperationList operations = this->operations;
