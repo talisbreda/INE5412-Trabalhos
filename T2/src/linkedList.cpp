@@ -42,33 +42,28 @@ void DoublyLinkedList::insert_back(Node* newNode) {
     }
 }
 
-void DoublyLinkedList::insert_after(Node* newNode, Node* currentNode){
-    if (!newNode) return;
-    if (!currentNode) return;
-    if (currentNode == tail){
-        tail = newNode;
-    }
+void DoublyLinkedList::insert_after(Node* newNode, Node* currentNode) {
+    if (!newNode || !currentNode) return;
 
     newNode->prev = currentNode;
     newNode->next = currentNode->next;
-    currentNode->next = newNode;
+
+    if (currentNode->next) {
+        currentNode->next->prev = newNode; // Update the prev pointer of the node after the new node
+    } else {
+        tail = newNode; // Update tail if currentNode is the current tail
+    }
+
+    currentNode->next = newNode; // Update the next pointer of the current node
 }
+
 
 // Remoção de um nó da lista
 void DoublyLinkedList::remove(Node* node) {
-    if (node->prev) {
-        node->prev->next = node->next;
-    } else {
-        head = node->next;
-    }
-
-    if (node->next) {
-        node->next->prev = node->prev;
-    } else {
-        tail = node->prev;
-    }
-
+    node->data_size = 0;
+    node->free = true;
 }
+
 
 void DoublyLinkedList::remove_front() {
     if (!head) return;  // Lista vazia
@@ -77,10 +72,10 @@ void DoublyLinkedList::remove_front() {
 
     if (head) {
         head->prev = nullptr;
+        delete head->prev;
     } else {
         tail = nullptr;  // Lista ficou vazia
     }
-
 }
 
 // Impressão da lista do início ao fim
@@ -101,7 +96,6 @@ int DoublyLinkedList::get_size() const {
     }
     return count;
 }
-
 
 // Limpeza da lista
 void DoublyLinkedList::clear() {

@@ -6,8 +6,7 @@ Bitmap::~Bitmap() {
     delete[] this->bitmap;
 }
 
-void Bitmap::bitmapManaging() {
-    OperationList operations = this->operations;
+void Bitmap::bitmapManaging(OperationList operations) {
     for (auto i = 0u; i < operations.size(); i++) {
         Operation* op = operations[i];
         if (op->getType() == 0) {
@@ -60,7 +59,7 @@ void Bitmap::bitmapManaging() {
     std::cout << std::endl;
 }
 
-void Bitmap::printSummary() {
+void Bitmap::printSummary(OperationList operations) {
     int usedBytes = 0;
     int allocatedBytes = 0;
     int deallocatedBytes = 0;
@@ -80,7 +79,6 @@ void Bitmap::printSummary() {
 
     int allocations = 0;
     int deallocations = 0;
-    OperationList operations = this->operations;
 
     for (auto i = 0u; i < operations.size(); i++) {
         if (operations[i]->getType() == 0) {

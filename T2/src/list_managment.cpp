@@ -5,23 +5,40 @@
 #include <algorithm>
 #include <Node.h>
 
-void ListManagment::execute(){  
-    OperationList operations = this->operations;
-    for (auto i = 0u; i < operations.size(); i++){
-        Operation* op = operations[i];
-        if (op->getType() == 0){
-            allocate_block(op->getBytesSize(), op->getId(), op->getBlocksSize());
-        } else if (op->getType() == 1){
-            //std::cout << freeBlocks.get_size() << std::endl;
-            deallocate_block(op->getId());
-        } else {
-            std::cout << "Operação inválida." << std::endl;
+void ListManagment::execute(OperationList operations){  
+    if (this->algorithm == 1) {
+        for (auto i = 0u; i < operations.size(); i++){
+            Operation* op = operations[i];
+            
+            if (op->getType() == 0){
+                first_fit(op->getBytesSize(), op->getId(), op->getBlocksSize());
+            } else if (op->getType() == 1){
+                //std::cout << freeBlocks.get_size() << std::endl;
+                deallocate_block(op->getId());
+            } else {
+                std::cout << "Operação inválida." << std::endl;
+            }
         }
+    } else if (this->algorithm == 2) {
+        for (auto i = 0u; i < operations.size(); i++){
+            Operation* op = operations[i];
+            
+            if (op->getType() == 0){
+                best_fit(op->getBytesSize(), op->getId(), op->getBlocksSize());
+            } else if (op->getType() == 1){
+                //std::cout << freeBlocks.get_size() << std::endl;
+                deallocate_block(op->getId());
+            } else {
+                std::cout << "Operação inválida." << std::endl;
+            }
+        }
+    } else {
+        std::cout << "Algoritmo inválido." << std::endl;
     }
     print_list();
 }
 
-void ListManagment::allocate_block(int program_size, int id, int block_size) { //provavelmente dá pra tirar o ultimo argumento
+void ListManagment::first_fit(int program_size, int id, int block_size) { //provavelmente dá pra tirar o ultimo argumento
     Node* current = memory_list.get_head();
     program_size = std::max(block_size, program_size);
     while(current != nullptr){
@@ -36,6 +53,28 @@ void ListManagment::allocate_block(int program_size, int id, int block_size) { /
             break;
         }
         current = current->next;
+    }
+}
+
+void ListManagment::best_fit(int program_size, int id, int block_size) {
+    Node* current = memory_list.get_head();
+    program_size = std::max(block_size, program_size);
+    Node* bestFit = nullptr;
+    while(current != nullptr){
+        if (current->ID == -1 && current->data_size >= program_size){
+            if (bestFit == nullptr || current->data_size < bestFit->data_size){
+                bestFit = current;
+            }
+        }
+        current = current->next;
+    }
+    if (bestFit != nullptr){
+        bestFit->ID = id;
+        if (bestFit->data_size > program_size){
+            Node* newNode = new Node(bestFit->data_size - program_size, -1);
+            memory_list.insert_after(newNode, bestFit);
+        }
+        bestFit->data_size = program_size;
     }
 }
 
@@ -54,8 +93,8 @@ void ListManagment::deallocate_block(int id) {
                 memory_list.remove(current);
             } else if (current->next != nullptr && current->next->ID == -1 && current->prev != nullptr && current->prev->ID == -1){
                 current->prev->data_size += current->data_size + current->next->data_size;
-                memory_list.remove(current);
                 memory_list.remove(current->next);
+                memory_list.remove(current);
             } else {
                 std::cerr << "Deu ruim" << std::endl;
             }
@@ -75,7 +114,7 @@ void ListManagment::print_list(){
     }
 }
 
-void ListManagment::printSummary() {
+void ListManagment::printSummary(OperationList operations) {
     int usedBytes = 0;
     int allocatedBytes = 0;
     int deallocatedBytes = 0;
@@ -96,7 +135,6 @@ void ListManagment::printSummary() {
     std::cout << deallocatedBytes << std::endl;
 
 
-    OperationList operations = this->operations;
     int allocations = 0;
     int deallocations = 0;
 

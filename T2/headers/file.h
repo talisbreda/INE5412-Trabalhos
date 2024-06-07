@@ -11,20 +11,17 @@ class File
 
 public:
 	File();
-	void read_file();
-	OperationList getOperations();
+	OperationList read_file();
 	long int getMemorySize();
 	int getType();
 	int getBlockSize();
 	int getAlgorithm();
-	File& operator=(const File& other);
 	~File();
 
 private:
 	std::ifstream myfile; 
 	int type, blockSize, algorithm;
 	long int memorySize;
-	OperationList operations;
 };
 
 #endif

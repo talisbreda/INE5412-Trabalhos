@@ -8,22 +8,28 @@ int main(int argc, char const *argv[])
 {
 
     File f;
-    f.read_file();
+    OperationList operations = f.read_file();
 
     if (f.getType() == 1)
     {
-        Bitmap b = Bitmap(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm(), f.getOperations());
-        b.bitmapManaging();
+        Bitmap b = Bitmap(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm());
+        b.bitmapManaging(operations);
         printf("\n");
-        b.printSummary();
+        b.printSummary(operations);
     }
     else if (f.getType() == 2)
     {
-        ListManagment l = ListManagment(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm(), f.getOperations());
-        l.execute();
+        ListManagment l = ListManagment(f.getMemorySize(), f.getBlockSize(), f.getAlgorithm());
+        l.execute(operations);
         printf("\n");
-        l.printSummary();
+        l.printSummary(operations);
     }
+
+    for (auto i = 0u; i < operations.size(); i++)
+    {
+        delete operations[i];
+    }
+    operations.clear();
 
     return 0;
 }

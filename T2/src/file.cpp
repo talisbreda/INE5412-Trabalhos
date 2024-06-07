@@ -8,32 +8,41 @@ File::File() {
     }
 }
 
-void File::read_file() {
+OperationList File::read_file() {
     if (!myfile.is_open()) {
         std::cout << "Arquivo não está aberto!" << std::endl;
     }
     myfile >> this->type >> this->memorySize >> this->blockSize >> this->algorithm;
 
+    OperationList operations;
     char operationType;
     while (myfile >> operationType) {
         if (operationType == 'A') {
             int size, id;
             myfile >> size >> id;
-            operations.push_back(new Operation(0, id, size));
+            if (size <= 0 || id < 0) {
+                std::cout << "Operação inválida!" << std::endl;
+                continue;
+            }
+            Operation* op = new Operation(0, id, size);
+            operations.push_back(op);
         } else if (operationType == 'D') {
             int id;
             myfile >> id;
-            operations.push_back(new Operation(1, id, -1));
+            if (id < 0) {
+                std::cout << "Operação inválida!" << std::endl;
+                continue;
+            }
+            Operation* op = new Operation(1, id, 0);
+            operations.push_back(op);
         }
         else {
             std::cout << "Operação inválida!" << std::endl;
         }
     }
-}
-
-OperationList File::getOperations() {
     return operations;
 }
+
 
 long int File::getMemorySize() {
     return memorySize;
@@ -51,18 +60,8 @@ int File::getAlgorithm() {
     return algorithm;
 }
 
-File& File::operator=(const File& other) {
-    if (this != &other) {
-        this->type = other.type;
-        this->memorySize = other.memorySize;
-        this->blockSize = other.blockSize;
-        this->algorithm = other.algorithm;
-        this->operations = other.operations;
-    }
-    return *this;
-}
-
 File::~File() {
     if (myfile.is_open()) {
-        myfile.close();}
+        myfile.close();
+    }
 }

@@ -4,6 +4,7 @@
 struct Node {
     int data_size;
     int ID;
+    bool free;
     Node* prev;
     Node* next;
 

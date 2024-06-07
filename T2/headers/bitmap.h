@@ -6,15 +6,15 @@
 class Bitmap : public Allocator
 {
 public:
-    Bitmap(int size, int blockSize, int algorithm, OperationList operations) : Allocator(size, blockSize, algorithm, operations) {
+    Bitmap(int size, int blockSize, int algorithm) : Allocator(size, blockSize, algorithm) {
         this->bitmap = new char[this->blocks];
         for (int i = 0; i < this->blocks; i++) {
             this->bitmap[i] = 0;
         }
     };
     ~Bitmap();
-    void bitmapManaging();
-    void printSummary();
+    void bitmapManaging(OperationList operations);
+    void printSummary(OperationList operations);
 
 private:
     char *bitmap;

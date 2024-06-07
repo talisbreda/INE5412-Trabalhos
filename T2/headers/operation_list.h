@@ -12,7 +12,7 @@ class OperationList {
         }
 
         void clear() {
-            size_ = 0;
+            delete[] contents;
         }
 
         void push_back(Operation* data) {
