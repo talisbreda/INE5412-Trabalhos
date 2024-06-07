@@ -12,6 +12,7 @@ public:
             this->bitmap[i] = 0;
         }
     };
+    ~Bitmap();
     void bitmapManaging();
     void printSummary();
 

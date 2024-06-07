@@ -2,6 +2,10 @@
 #include <operation_list.h>
 #include <iostream>
 
+Bitmap::~Bitmap() {
+    delete[] this->bitmap;
+}
+
 void Bitmap::bitmapManaging() {
     OperationList operations = this->operations;
     for (auto i = 0u; i < operations.size(); i++) {
